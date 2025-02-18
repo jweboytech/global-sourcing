@@ -9,7 +9,8 @@
     "lint": "next lint",
     "pages:build": "npx @cloudflare/next-on-pages",
     "preview": "npm run pages:build && wrangler pages dev",
-    "deploy:prod": "npm run pages:build && wrangler pages deploy"
+    "deploy:prod": "npm run pages:build && wrangler pages deploy --branch=main",
+    "deploy:test": "npm run pages:build && wrangler pages deploy --branch=dev"
   },
   "dependencies": {
     "@hookform/resolvers": "^4.1.0",
