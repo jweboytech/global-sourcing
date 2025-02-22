@@ -12,7 +12,7 @@ interface BaseProps<T = any> {
 
 interface Option {
   label: string;
-  value: string | number | React.ReactElement;
+  value: React.Key;
 }
 
 interface PageList<T> {

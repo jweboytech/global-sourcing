@@ -32,7 +32,6 @@ function SelectField<T extends FieldValues>({
   label,
   className,
   placeholder,
-  isBorder,
 }: SelectFieldProps<T>) {
   return (
     <FormField
@@ -42,9 +41,7 @@ function SelectField<T extends FieldValues>({
         return (
           <FormItem>
             {label && (
-              <FormLabel className="text-[#6C6A73] text-sm font-medium ">
-                {label}
-              </FormLabel>
+              <FormLabel className="font-medium text-base">{label}</FormLabel>
             )}
             <Select
               onValueChange={field.onChange}
@@ -52,7 +49,7 @@ function SelectField<T extends FieldValues>({
               defaultValue={options[0]?.value}
             >
               <FormControl>
-                <SelectTrigger className={className} isBorder={isBorder}>
+                <SelectTrigger className={className}>
                   <SelectValue
                     placeholder={
                       <span className="text-black-60">

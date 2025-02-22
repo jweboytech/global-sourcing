@@ -12,7 +12,6 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { HomePageProps } from "../page";
-import { DASHBOARD } from "@/constants/common";
 
 const schema = z.object({
   email: z
@@ -21,7 +20,7 @@ const schema = z.object({
   password: z.string({ message: "Enter your password" }),
 });
 
-const Signin = ({ onNext }: HomePageProps) => {
+const Signup = ({ onNext }: HomePageProps) => {
   const router = useRouter();
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
@@ -29,7 +28,7 @@ const Signin = ({ onNext }: HomePageProps) => {
 
   const submitForm = (values: z.infer<typeof schema>) => {
     console.log(values);
-    router.push(DASHBOARD);
+    router.push("/dashboard");
   };
 
   const handleGoogleAuth = () => {
@@ -41,7 +40,7 @@ const Signin = ({ onNext }: HomePageProps) => {
 
   return (
     <div className="flex flex-col gap-4">
-      <h2 className="text-2xl font-bold">Sign in</h2>
+      <h2 className="text-2xl font-bold">Sign up</h2>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(submitForm)}>
           <div className="flex flex-col gap-6">
@@ -56,19 +55,20 @@ const Signin = ({ onNext }: HomePageProps) => {
               placeholder="Enter your password"
             />
             <Button type="submit" size="xl" fullWidth>
-              Sign in
+              Sign up
             </Button>
           </div>
         </form>
       </Form>
       <div className="flex flex-col gap-5">
         <p className="text-sm text-center">
-          <span>New to Accio?&nbsp;&nbsp;</span>
+          <span>Already have an account?&nbsp;&nbsp;</span>
           <span
+            href="/signup"
             className="underline font-semibold cursor-pointer"
-            onClick={onNext("signup")}
+            onClick={onNext("signin")}
           >
-            Sign up now
+            Sign in
           </span>
         </p>
       </div>
@@ -91,4 +91,4 @@ const Signin = ({ onNext }: HomePageProps) => {
   );
 };
 
-export default Signin;
+export default Signup;
