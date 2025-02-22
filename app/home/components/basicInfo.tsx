@@ -15,24 +15,33 @@ import clsx from "clsx";
 import { Search } from "lucide-react";
 import React from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import { z } from "zod";
 
-const schema = z.object({
-  firstName: z.string({ message: "Please enter first name" }),
-  lastName: z.string({ message: "Please enter last name" }).optional(),
-  country: z.string().optional(),
-  type: z.string(),
-  companyName: z.string({ message: "Please enter company name" }),
-  industry: z.string(),
-  teamSize: z.string(),
-  companySize: z.string(),
-});
-
 const BasicInfo = () => {
-  const [step, setStep] = React.useState(3);
+  const [step, setStep] = React.useState(0);
+
+  const schema = z.object({
+    // step = 0
+    firstName: z.string({ message: "Please enter first name" }),
+    lastName: z.string().optional(),
+    country: z.string({ message: "Please select country" }),
+    // step = 1
+    type: z.string(),
+    companyName:
+      step === 1
+        ? z.string({ message: "Please enter company name" })
+        : z.string().optional(),
+    industry: z.string(),
+    // step = 2
+    teamSize: z.string(),
+    companySize: z.string(),
+  });
+
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
+      country: "country",
       type: WORK_TYPES[0].value,
       industry: INDUSTRY_TYPES[0].value,
       teamSize: TEAM_SIZE[0].value,
@@ -43,6 +52,9 @@ const BasicInfo = () => {
   const submitForm = (values: z.infer<typeof schema>) => {
     console.log(values);
     handleNextStep();
+    if (step === 2) {
+      toast.success("保存成功");
+    }
   };
 
   const handleNextStep = () => {
@@ -175,18 +187,27 @@ const BasicInfo = () => {
                   />
                 </React.Fragment>
               )}
-              <div className={clsx(step === 1 && "grid grid-cols-2 gap-4")}>
-                {step === 1 && (
+              <div
+                className={clsx(
+                  (step === 1 || step === 2) && "grid grid-cols-2 gap-4"
+                )}
+              >
+                {(step === 1 || step === 2) && (
                   <Button
                     type="button"
                     variant="outline"
                     fullWidth
+                    size="xl"
                     onClick={handlePrevStep}
                   >
                     Back
                   </Button>
                 )}
-                {step < 3 && <Button type="submit">Next</Button>}
+                {step < 3 && (
+                  <Button type="submit" size="xl" fullWidth>
+                    Next
+                  </Button>
+                )}
               </div>
             </form>
           </Form>
