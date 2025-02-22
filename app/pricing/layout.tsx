@@ -3,7 +3,7 @@ import React from "react";
 
 const Pricinglayout = ({ children }: BaseProps) => {
   return (
-    <div>
+    <div className="flex flex-col w-full">
       <Navbar />
       <main>{children}</main>
     </div>
