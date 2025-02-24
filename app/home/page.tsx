@@ -24,7 +24,7 @@ const HomePage = () => {
 
   return (
     <div>
-      <Dialog>
+      <Dialog open>
         <DialogTrigger>Open</DialogTrigger>
         <DialogContent>
           <DialogTitle />
@@ -32,13 +32,13 @@ const HomePage = () => {
           {step === "signup" && <Signup onNext={handleChangeStep} />}
         </DialogContent>
       </Dialog>
-      <Dialog open>
+      {/* <Dialog open>
         <DialogTrigger>Message Dialog</DialogTrigger>
         <DialogContent className="max-w-[800px]">
           <DialogTitle />
           <BasicInfo />
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
     </div>
   );
 };

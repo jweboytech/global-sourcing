@@ -12,7 +12,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { HomePageProps } from "../page";
-import { DASHBOARD } from "@/constants/common";
+import { DASHBOARD, REQUEST_BASE_URL } from "@/constants/common";
 
 const schema = z.object({
   email: z
@@ -33,10 +33,11 @@ const Signin = ({ onNext }: HomePageProps) => {
   };
 
   const handleGoogleAuth = () => {
-    const params = getGoogleWindowParams();
-    const url = "/auth/login";
+    // const params = getGoogleWindowParams();
+    // const url = "/user/googleLoginUrl";
+    // window.open(url, "New Window", params);
 
-    window.open(url, "New Window", params);
+    window.location.href = REQUEST_BASE_URL + "/user/googleLoginUrl";
   };
 
   return (
