@@ -21,7 +21,7 @@ http.interceptors.request.use(
       config.headers["Content-Type"] = getContentType(config.contentType);
 
       if (userToken != null) {
-        config.headers["Authorization"] = `Bearer ${userToken}`;
+        config.headers["userToken"] = `${userToken}`;
       }
     }
 
@@ -71,13 +71,12 @@ http.interceptors.response.use(
     // console.log(res.data, msg);
 
     // success
-    if (code === 200) {
-      console.warn(22, res.data);
+    if (code === 1) {
       return !data ? { data: res.data } : res.data;
     }
 
-    if (code === 401) {
-      window.location.href = "/signin";
+    if (code === 109) {
+      window.location.href = "/home";
       return;
     }
 
@@ -106,6 +105,7 @@ http.interceptors.response.use(
     }
 
     toast.error(msg);
+    throw Error(msg);
 
     // if (err.message === 'Network Error') {
     //   msg = '网络错误，请稍候重试';
@@ -113,9 +113,6 @@ http.interceptors.response.use(
     // if (isTimeout) {
     //   msg = '请求超时，请稍候重试';
     // }
-
-    // // message.error(msg);
-    // throw Error(msg);
   }
 );
 
@@ -135,7 +132,7 @@ type RequestOption<P> = {
 export const request = <T>(config: RequestConfig) => {
   return http
     .request<T>(config)
-    .then((res) => res?.data || {})
+    .then((res) => res?.data)
     .catch((msg) => {
       toast.error(msg);
       return Promise.reject(msg);

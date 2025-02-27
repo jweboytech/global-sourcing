@@ -20,7 +20,7 @@ const schema = z.object({
   password: z.string({ message: "Enter your password" }),
 });
 
-const Signup = ({ onNext }: HomePageProps) => {
+const Signup = () => {
   const router = useRouter();
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
@@ -63,11 +63,7 @@ const Signup = ({ onNext }: HomePageProps) => {
       <div className="flex flex-col gap-5">
         <p className="text-sm text-center">
           <span>Already have an account?&nbsp;&nbsp;</span>
-          <span
-            href="/signup"
-            className="underline font-semibold cursor-pointer"
-            onClick={onNext("signin")}
-          >
+          <span className="underline font-semibold cursor-pointer">
             Sign in
           </span>
         </p>

@@ -25,8 +25,8 @@ export const postFetcher = <T>(
   return request<T>({ url, method: "POST", data });
 };
 
-export const getFetcher = <T>(url: string) => {
-  return request<T>({ url, method: "GET" });
+export const getFetcher = <T>(url: unknown) => {
+  return request<T>({ url: url as string, method: "GET" });
 };
 
 // export const putFetcher = <T = any>(url: string, options?: any) => {

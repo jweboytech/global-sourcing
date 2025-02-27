@@ -10,16 +10,28 @@ import {
   TEAM_SIZE,
   WORK_TYPES,
 } from "@/constants";
+import { postFetcher } from "@/utils/request/fetcher";
 import { zodResolver } from "@hookform/resolvers/zod";
 import clsx from "clsx";
 import { Search } from "lucide-react";
 import React from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import useSWR from "swr";
+import useSWRMutation from "swr/mutation";
 import { z } from "zod";
 
-const BasicInfo = () => {
+const BasicInfo = ({ userId }: { userId?: number }) => {
   const [step, setStep] = React.useState(0);
+  const { trigger, isMutating } = useSWRMutation<z.infer<typeof schema>>(
+    userId ? "/user/update" : null,
+    postFetcher,
+    {
+      onSuccess() {
+        toast.success("提交成功");
+      },
+    }
+  );
 
   const schema = z.object({
     // step = 0
@@ -27,25 +39,25 @@ const BasicInfo = () => {
     lastName: z.string().optional(),
     country: z.string({ message: "Please select country" }),
     // step = 1
-    type: z.string(),
-    companyName:
+    job: z.string(),
+    company:
       step === 1
         ? z.string({ message: "Please enter company name" })
         : z.string().optional(),
     industry: z.string(),
     // step = 2
-    teamSize: z.string(),
-    companySize: z.string(),
+    teamPeoples: z.string(),
+    companyPeoples: z.string(),
   });
 
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
       country: "country",
-      type: WORK_TYPES[0].value,
+      job: WORK_TYPES[0].value,
       industry: INDUSTRY_TYPES[0].value,
-      teamSize: TEAM_SIZE[0].value,
-      companySize: COMPANY_SIZE[0].value,
+      teamPeoples: TEAM_SIZE[0].value,
+      companyPeoples: COMPANY_SIZE[0].value,
     },
   });
 
@@ -53,7 +65,7 @@ const BasicInfo = () => {
     console.log(values);
     handleNextStep();
     if (step === 2) {
-      toast.success("保存成功");
+      trigger({ id: userId, ...values });
     }
   };
 
@@ -154,13 +166,13 @@ const BasicInfo = () => {
               {step === 1 && (
                 <React.Fragment>
                   <RadioGroupField
-                    name="type"
+                    name="job"
                     label="What type of company do you work for?"
                     control={form.control}
                     options={WORK_TYPES}
                   />
                   <InputField
-                    name="companyName"
+                    name="company"
                     label="What is your company name?"
                   />
                   <SelectField
@@ -174,13 +186,13 @@ const BasicInfo = () => {
               {step === 2 && (
                 <React.Fragment>
                   <RadioGroupField
-                    name="teamSize"
+                    name="teamPeoples"
                     label="How many people are on your team?"
                     control={form.control}
                     options={TEAM_SIZE}
                   />
                   <RadioGroupField
-                    name="companySize"
+                    name="companyPeoples"
                     label="How many people are work at your company?"
                     control={form.control}
                     options={COMPANY_SIZE}
@@ -204,7 +216,12 @@ const BasicInfo = () => {
                   </Button>
                 )}
                 {step < 3 && (
-                  <Button type="submit" size="xl" fullWidth>
+                  <Button
+                    type="submit"
+                    size="xl"
+                    isLoading={isMutating}
+                    fullWidth
+                  >
                     Next
                   </Button>
                 )}
@@ -214,7 +231,7 @@ const BasicInfo = () => {
         ) : (
           <div className="flex flex-col gap-6">
             <div className="w-full h-60 bg-black/10" />
-            <Button size="xl" href="/dashboard" fullWidth>
+            <Button size="xl" href="/dashboard/profile" fullWidth>
               Download Now!
             </Button>
           </div>
