@@ -20,8 +20,12 @@ import toast from "react-hot-toast";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 import { z } from "zod";
+import LocationField from "./locationField";
 
 const BasicInfo = ({ userId }: { userId?: number }) => {
+  const { data: countryData } = useSWR<
+    { title: string } & PageList<Description>
+  >("/user/country", getFetcher);
   const { data } = useSWR<{ title: string } & PageList<Description>>(
     "/user/seller/desc",
     getFetcher
@@ -57,7 +61,6 @@ const BasicInfo = ({ userId }: { userId?: number }) => {
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
-      country: "country",
       job: WORK_TYPES[0].value,
       industry: INDUSTRY_TYPES[0].value,
       teamPeoples: TEAM_SIZE[0].value,
@@ -128,12 +131,7 @@ const BasicInfo = ({ userId }: { userId?: number }) => {
                       />
                     </div>
                   </div>
-                  <SelectField
-                    name="country"
-                    label="Which country& region are you or your company in?"
-                    control={form.control}
-                    options={[]}
-                  />
+                  <LocationField form={form} />
                 </React.Fragment>
               )}
               {step === 1 && (
