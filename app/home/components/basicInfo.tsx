@@ -10,7 +10,7 @@ import {
   TEAM_SIZE,
   WORK_TYPES,
 } from "@/constants";
-import { postFetcher } from "@/utils/request/fetcher";
+import { getFetcher, postFetcher } from "@/utils/request/fetcher";
 import { zodResolver } from "@hookform/resolvers/zod";
 import clsx from "clsx";
 import { Search } from "lucide-react";
@@ -22,6 +22,10 @@ import useSWRMutation from "swr/mutation";
 import { z } from "zod";
 
 const BasicInfo = ({ userId }: { userId?: number }) => {
+  const { data } = useSWR<{ title: string } & PageList<Description>>(
+    "/user/seller/desc",
+    getFetcher
+  );
   const [step, setStep] = React.useState(0);
   const { trigger, isMutating } = useSWRMutation<z.infer<typeof schema>>(
     userId ? "/user/update" : null,
@@ -80,52 +84,21 @@ const BasicInfo = ({ userId }: { userId?: number }) => {
   return (
     <div className="flex gap-4 px-6 py-8">
       <div className="flex flex-col gap-12 flex-1">
-        <h2 className="font-semibold text-2xl">
-          Let&apos;s customize your Experience!
-        </h2>
+        <h2 className="font-semibold text-2xl">{data?.title}</h2>
         <ul className="grid grid-cols-1 gap-6">
-          <li className="flex gap-4 items-start">
-            <div className="bg-primary/20 px-[6px] py-[6px] rounded-full h-fit">
-              <Search className="text-primary" size={12} />
-            </div>
-            <div className="flex flex-col gap-1">
-              <h3 className="text-lg font-semibold leading-none">
-                Global Sourcing With AI
-              </h3>
-              <p className="text-sm text-black/50">
-                AI-powered sourcing engine.powered sourcing engine.powered
-                sourcing engine.
-              </p>
-            </div>
-          </li>
-          <li className="flex gap-4 items-start">
-            <div className="bg-primary/20 px-[6px] py-[6px] rounded-full h-fit">
-              <Search className="text-primary" size={12} />
-            </div>
-            <div className="flex flex-col gap-1">
-              <h3 className="text-lg font-semibold leading-none">
-                Global Sourcing With AI
-              </h3>
-              <p className="text-sm text-black/50">
-                AI-powered sourcing engine.powered sourcing engine.powered
-                sourcing engine.
-              </p>
-            </div>
-          </li>
-          <li className="flex gap-4 items-start">
-            <div className="bg-primary/20 px-[6px] py-[6px] rounded-full h-fit">
-              <Search className="text-primary" size={12} />
-            </div>
-            <div className="flex flex-col gap-1">
-              <h3 className="text-lg font-semibold leading-none">
-                Global Sourcing With AI
-              </h3>
-              <p className="text-sm text-black/50">
-                AI-powered sourcing engine.powered sourcing engine.powered
-                sourcing engine.
-              </p>
-            </div>
-          </li>
+          {data?.items.map((item, index) => (
+            <li className="flex gap-4 items-start" key={index}>
+              <div className="bg-primary/20 px-[6px] py-[6px] rounded-full h-fit">
+                <Search className="text-primary" size={12} />
+              </div>
+              <div className="flex flex-col gap-1">
+                <h3 className="text-lg font-semibold leading-none">
+                  {item.name}
+                </h3>
+                <p className="text-sm text-black/50">{item.desc}</p>
+              </div>
+            </li>
+          ))}
         </ul>
       </div>
       <div className="w-[2px] border border-dashed h-90 mx-4" />

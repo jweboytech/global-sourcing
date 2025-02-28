@@ -10,8 +10,6 @@ interface Response extends axios.AxiosResponse<{ data: any }> {}
 const http = axios.default.create(config);
 
 // 请求错误的业务场景
-// const errorScenes = [LOGIN_EXPIRED, NOT_LOGGED_IN, INVALID_TOKEN, NO_TOKEN];
-
 // 请求拦截器
 http.interceptors.request.use(
   function request(config: RequestConfig) {
@@ -21,7 +19,7 @@ http.interceptors.request.use(
       config.headers["Content-Type"] = getContentType(config.contentType);
 
       if (userToken != null) {
-        config.headers["userToken"] = `${userToken}`;
+        config.headers["Authorization"] = `Bearer ${userToken}`;
       }
     }
 
@@ -76,7 +74,8 @@ http.interceptors.response.use(
     }
 
     if (code === 109) {
-      window.location.href = "/home";
+      toast.error("invalid token");
+      // window.location.href = "/home";
       return;
     }
 

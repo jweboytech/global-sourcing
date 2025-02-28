@@ -16,7 +16,7 @@ interface Option {
 }
 
 interface PageList<T> {
-  rows: T[];
+  items: T[];
 }
 
 interface Pagination {
