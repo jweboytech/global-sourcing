@@ -43,7 +43,7 @@ const Signin = () => {
     postFetcher,
     {
       onSuccess() {
-        toast.success("发送成功");
+        toast.success("email 发送成功");
       },
     }
   );
@@ -52,7 +52,6 @@ const Signin = () => {
     getFetcher,
     {
       onSuccess(data) {
-        console.log(data);
         window.location.href = data;
       },
     }

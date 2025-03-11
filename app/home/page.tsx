@@ -37,7 +37,7 @@ const HomePage = () => {
             <Signin />
           </DialogContent>
         </Dialog>
-        <Dialog>
+        {/* <Dialog>
           <DialogTrigger asChild>
             <Button variant="primary" fullWidth>
               Sign up
@@ -45,9 +45,9 @@ const HomePage = () => {
           </DialogTrigger>
           <DialogContent>
             <DialogTitle />
-            <Signin />
+            <Signup />
           </DialogContent>
-        </Dialog>
+        </Dialog> */}
       </section>
       <main className="px-6 py-6 flex-1">
         <div className="flex h-full items-center justify-center w-full text-3xl font-medium">

@@ -12,6 +12,8 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { HomePageProps } from "../page";
+import useSWR from "swr";
+import { getFetcher } from "@/utils/request/fetcher";
 
 const schema = z.object({
   email: z
@@ -21,6 +23,7 @@ const schema = z.object({
 });
 
 const Signup = () => {
+  const data = useSWR("/user/googleLoginUrl", getFetcher);
   const router = useRouter();
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
@@ -33,9 +36,10 @@ const Signup = () => {
 
   const handleGoogleAuth = () => {
     const params = getGoogleWindowParams();
-    const url = "/auth/login";
+    const url = "/user/googleLogin";
+    console.log(data);
 
-    window.open(url, "New Window", params);
+    // window.open(url, "New Window", params);
   };
 
   return (
@@ -49,11 +53,11 @@ const Signup = () => {
               name="email"
               placeholder="Enter your email"
             />
-            <InputField
+            {/* <InputField
               control={form.control}
               name="password"
               placeholder="Enter your password"
-            />
+            /> */}
             <Button type="submit" size="xl" fullWidth>
               Sign up
             </Button>
