@@ -6,32 +6,55 @@ import { Coins, Star, User } from "lucide-react";
 import React from "react";
 import useSWR from "swr";
 import { initializePaddle, Paddle } from "@paddle/paddle-js";
-import useSWRMutation from "swr/mutation";
+import { useTypedMutation } from "@/hooks/useTypedMutation";
 
 const PricingPage = () => {
+  const priceIdRef = React.useRef<string>("");
   const activeKeyRef = React.useRef(-1);
   const [paddle, setPaddle] = React.useState<Paddle>();
-  const { trigger, isMutating } = useSWRMutation(
-    "/order/create",
-    postFetcher<string>,
-    {
-      onSuccess(data) {
-        paddle?.Checkout.open({
-          transactionId: "txn_01jwndbwfrfcdhvv9t34bjjzme",
-          // items: [{ priceId: "pri_01jwn80b36ejdkp03mjytzn3tf", quantity: 1 }],
-          customData: { orderNo: data },
-        });
-      },
-    }
-  );
+  const { trigger, isMutating } = useTypedMutation<
+    { productId: string },
+    string
+  >("/order/create", postFetcher, {
+    onSuccess(data) {
+      paddle?.Checkout.open({
+        items: [{ priceId: priceIdRef.current, quantity: 1 }],
+        customData: { orderNo: data },
+      });
+    },
+  });
   const { data: paymentToken } = useSWR(
     "/order/clientSideToken",
     getFetcher<string>
   );
   const { data, isLoading } = useSWR("/order/goods", getFetcher<Product[]>);
+  const goods = React.useMemo(() => {
+    if (Array.isArray(data)) {
+      return data.sort((a, b) => {
+        const price1 = a.prices[0];
+        const price2 = b.prices[0];
+        return (
+          Number(price1.unitPrice.amount) - Number(price2.unitPrice.amount)
+        );
+      });
+    }
+
+    return [];
+  }, [data]);
+
+  const getCurrPrice = (prices: Price[]) => {
+    const price = prices[0];
+    const usdFormatter = new Intl.NumberFormat("en-US", {
+      currency: price.unitPrice.currencyCode,
+      style: "currency",
+    });
+    const result = (Number(price.unitPrice.amount) / 100).toFixed(2);
+    return usdFormatter.format(Number(result));
+  };
 
   const handlePayment = (data: Product, index: number) => () => {
     activeKeyRef.current = index;
+    priceIdRef.current = data.prices[0]?.id;
     trigger({ productId: data.id });
   };
 
@@ -52,7 +75,7 @@ const PricingPage = () => {
     !isLoading && (
       <div className="px-6 py-6">
         <div className="grid grid-cols-4 gap-4">
-          {data?.map((item, index) => (
+          {goods.map((item, index) => (
             <div
               className="bg-[#00000008] py-12 px-6 rounded-lg flex flex-col gap-3"
               key={item.id}
@@ -60,7 +83,7 @@ const PricingPage = () => {
               <div className="text-black font-bold text-2xl">{item.name}</div>
               <div className="flex items-end gap-1">
                 <span className="text-[48px] font-semibold leading-none">
-                  $0
+                  {getCurrPrice(item.prices)}
                 </span>
                 <span className="text-sm text-black/60">/month</span>
               </div>
